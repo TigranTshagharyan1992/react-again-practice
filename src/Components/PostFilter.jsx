@@ -3,12 +3,6 @@ import MyInput from "./UI/input/MyInput";
 import MySelect from "./UI/select/MySelect";
 
 const PostFilter = ({posts, filter, setFilter}) => {
-    if(!posts.length){
-        return <h1 style={{textAlign: 'center'}}>
-            no posts
-        </h1>
-    }
-
     return (
         <div>
             <div id='search'>
@@ -23,7 +17,7 @@ const PostFilter = ({posts, filter, setFilter}) => {
                            defaultValue='Order By'
                            options={[
                     {name:'By Title', value:'title'},
-                    {name:'By Description', value:'description'},
+                    {name:'By Description', value:'body'},
                 ]}/>
             </div>
         </div>

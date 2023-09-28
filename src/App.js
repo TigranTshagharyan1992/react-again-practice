@@ -7,6 +7,8 @@ import PostForm from "./Components/PostForm";
 import PostFilter from "./Components/PostFilter";
 import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/MyButton";
+import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
+import axios from "axios";
 
 /**
  *
@@ -15,29 +17,10 @@ import MyButton from "./Components/UI/button/MyButton";
  */
 function App() {
     const [value, setValue] = useState('');
-    const [posts, setPosts] = useState([
-        {id:1, title:'b', description:'ccc'},
-        {id:2, title:'a', description:'bbb'},
-        {id:3, title:'c', description:'aaa'}
-    ]);
-    const [filter, setFilter] = useState({sort: '', query: ''})
-    const [visible,setVisible] =  useState(false)
-    const sortedPosts = useMemo(() => {
-        if(filter.sort){
-            return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]));
-        }
-        return posts;
-    },[posts,filter.sort]);
-
-    const sortedAndSearchPosts = useMemo(()=>{
-        if(filter.query){
-            return sortedPosts.filter(post => post.title.includes(filter.query))
-        }else {
-            return sortedPosts;
-        }
-
-    },[filter.sort,filter.query,posts]);
-
+    const [posts, setPosts] = useState([]);
+    const [filter, setFilter] = useState({sort: '', query: ''});
+    const [visible,setVisible] =  useState(false);
+    const sortedAndSearchPosts = useCustomeHookPosts(posts,filter.sort,filter.query);
 
     /**
      *
@@ -65,8 +48,18 @@ function App() {
         setVisible(!visible);
     }
 
+    async function fetchPosts() {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+        setPosts(response.data);
+    }
+
     return (
     <div className="App">
+        <div id="api block">
+            <MyButton onClick = {fetchPosts}>
+                Get data from server
+            </MyButton>
+        </div>
         <input type="text" value={value} onChange={event => setValue(event.target.value)}/>
         <Counter />
         <ClassCounter />
