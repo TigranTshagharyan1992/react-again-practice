@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import Counter from "./Components/Counter";
 import ClassCounter from "./Components/ClassCounter";
 import './styles/App.css'
@@ -52,17 +52,15 @@ function App() {
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
         setPosts(response.data);
     }
-
+    useEffect(() => {
+        fetchPosts();
+    },[])
     return (
     <div className="App">
-        <div id="api block">
-            <MyButton onClick = {fetchPosts}>
-                Get data from server
-            </MyButton>
-        </div>
-        <input type="text" value={value} onChange={event => setValue(event.target.value)}/>
-        <Counter />
-        <ClassCounter />
+
+        {/*<input type="text" value={value} onChange={event => setValue(event.target.value)}/>*/}
+        {/*<Counter />*/}
+        {/*<ClassCounter />*/}
         <h2>Create Post Block</h2>
         <MyButton style={{marginTop: 10, marginBottom: 10}} onClick={modalPopup}>Show form</MyButton>
         <MyModal visible={visible} setVisible={setVisible}>
