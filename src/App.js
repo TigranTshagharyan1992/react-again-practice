@@ -1,6 +1,4 @@
 import React, {useState,useEffect} from 'react';
-import Counter from "./Components/Counter";
-import ClassCounter from "./Components/ClassCounter";
 import './styles/App.css'
 import PostList from "./Components/PostList";
 import PostForm from "./Components/PostForm";
@@ -8,7 +6,7 @@ import PostFilter from "./Components/PostFilter";
 import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/MyButton";
 import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
-import axios from "axios";
+import apiService from "./Serivicies";
 
 /**
  *
@@ -16,10 +14,10 @@ import axios from "axios";
  * @constructor
  */
 function App() {
-    const [value, setValue] = useState('');
     const [posts, setPosts] = useState([]);
     const [filter, setFilter] = useState({sort: '', query: ''});
     const [visible,setVisible] =  useState(false);
+    const [loader,setLoader] =  useState(false);
     const sortedAndSearchPosts = useCustomeHookPosts(posts,filter.sort,filter.query);
 
     /**
@@ -48,29 +46,31 @@ function App() {
         setVisible(!visible);
     }
 
-    async function fetchPosts() {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-        setPosts(response.data);
+    async function getPosts() {
+        setLoader(true);
+        setTimeout(async ()=>{
+            const response = await apiService.apiCall();
+            setPosts(response);
+            setLoader(false);
+        },500)
     }
+
     useEffect(() => {
-        fetchPosts();
+        getPosts();
     },[])
+
     return (
     <div className="App">
-
-        {/*<input type="text" value={value} onChange={event => setValue(event.target.value)}/>*/}
-        {/*<Counter />*/}
-        {/*<ClassCounter />*/}
         <h2>Create Post Block</h2>
         <MyButton style={{marginTop: 10, marginBottom: 10}} onClick={modalPopup}>Show form</MyButton>
         <MyModal visible={visible} setVisible={setVisible}>
             <PostForm addPost={addPost}/>
         </MyModal>
 
-        <PostFilter posts={sortedAndSearchPosts} filter={filter} setFilter={setFilter}/>
-        {posts.length !== 0
+        <PostFilter  filter={filter} setFilter={setFilter}/>
+        {!loader
         ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
-        : <h2>we dont have posts</h2>
+        : <h2>Loading....</h2>
         }
     </div>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import MyInput from "./UI/input/MyInput";
 import MySelect from "./UI/select/MySelect";
 
-const PostFilter = ({posts, filter, setFilter}) => {
+const PostFilter = ({filter, setFilter}) => {
     return (
         <div>
             <div id='search'>
