@@ -1,6 +1,6 @@
 import React from 'react';
-
-const Loader = () => {
+import  './Loader.css'
+const Index = () => {
     return (
         <div className='loader'>
 
@@ -8,4 +8,4 @@ const Loader = () => {
     );
 };
 
-export default Loader;
+export default Index;

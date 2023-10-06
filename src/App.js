@@ -1,12 +1,14 @@
 import React, {useState,useEffect} from 'react';
 import './styles/App.css'
 import PostList from "./Components/PostList";
+import Loader from "./Components/UI/Loader";
 import PostForm from "./Components/PostForm";
 import PostFilter from "./Components/PostFilter";
 import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/MyButton";
 import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
 import apiService from "./Serivicies";
+import {useFetching} from "./hooks/useFetching";
 
 /**
  *
@@ -19,6 +21,13 @@ function App() {
     const [visible,setVisible] =  useState(false);
     const [loader,setLoader] =  useState(false);
     const sortedAndSearchPosts = useCustomeHookPosts(posts,filter.sort,filter.query);
+
+    const [fetchPosts, isPostsLoading, postError] = useFetching(
+        async()=>{
+            const response = await apiService.apiCall();
+            setPosts(response);
+        }
+    )
 
     /**
      *
@@ -52,7 +61,7 @@ function App() {
             const response = await apiService.apiCall();
             setPosts(response);
             setLoader(false);
-        },500)
+        },1500)
     }
 
     useEffect(() => {
@@ -70,7 +79,7 @@ function App() {
         <PostFilter  filter={filter} setFilter={setFilter}/>
         {!loader
         ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
-        : <h2>Loading....</h2>
+        : <div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>
         }
     </div>
   );
