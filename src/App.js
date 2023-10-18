@@ -16,7 +16,7 @@ import {useFetching} from "./hooks/useFetching";
  * @constructor
  */
 function App() {
-    const postsUrl = 'https://jsonplaceholder.typicode.com/posts';
+    const postsUrl = 'https://jsonplaceholder.typicode.com/posts?_limit=10';
     const [posts, setPosts] = useState([]);
     const [filter, setFilter] = useState({sort: '', query: ''});
     const [visible,setVisible] =  useState(false);
@@ -35,8 +35,8 @@ function App() {
     async function getPosts() {
         setLoader(true)
         const response = await apiService.apiCall(postsUrl,setError);
-        console.log(response);
-        // setPosts(posts);
+        console.log(response.headers['x-total-count']);
+        // setPosts(response.data);
         setLoader(false);
     }
 
