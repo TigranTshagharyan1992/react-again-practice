@@ -33,16 +33,11 @@ function App() {
     // )
 
     async function getPosts() {
-        try {
-            setLoader(true)
-            const posts = await apiService.apiCall(postsUrl);
-            setPosts(posts);
-            setLoader(false);
-        }catch (e){
-            setError(e)
-        } finally {
-            setLoader(false)
-        }
+        setLoader(true)
+        const response = await apiService.apiCall(postsUrl,setError);
+        console.log(response);
+        // setPosts(posts);
+        setLoader(false);
     }
 
     useEffect(() => {
