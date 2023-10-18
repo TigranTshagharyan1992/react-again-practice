@@ -13,11 +13,13 @@ export const useSortedPosts = (posts, sort) => {
 
 export const useCustomeHookPosts = (posts, sort, query) => {
 
+
+
     const sortedPosts = useSortedPosts(posts,sort)
 
     const sortedAndSearchPosts = useMemo(()=>{
         if(query){
-            return sortedPosts.filter(post => (post.title.includes(query) || post.description.includes(query)))
+            return sortedPosts.filter(post => (post.title.includes(query)))
         }else {
             return sortedPosts;
         }

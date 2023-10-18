@@ -16,18 +16,39 @@ import {useFetching} from "./hooks/useFetching";
  * @constructor
  */
 function App() {
+    const postsUrl = 'https://jsonplaceholder.typicode.com/posts';
     const [posts, setPosts] = useState([]);
     const [filter, setFilter] = useState({sort: '', query: ''});
     const [visible,setVisible] =  useState(false);
     const [loader,setLoader] =  useState(false);
+    const [error,setError] =  useState(false);
+
     const sortedAndSearchPosts = useCustomeHookPosts(posts,filter.sort,filter.query);
 
-    const [fetchPosts, isPostsLoading, postError] = useFetching(
-        async()=>{
-            const response = await apiService.apiCall();
-            setPosts(response);
+    // const [fetchPosts, isPostsLoading, postError] = useFetching(
+    //     async()=>{
+    //         const response = await apiService.apiCall(postsUrl);
+    //         setPosts(response);
+    //     }
+    // )
+
+    async function getPosts() {
+        try {
+            setLoader(true)
+            const posts = await apiService.apiCall(postsUrl);
+            setPosts(posts);
+            setLoader(false);
+        }catch (e){
+            setError(e)
+        } finally {
+            setLoader(false)
         }
-    )
+    }
+
+    useEffect(() => {
+        getPosts();
+    },[]);
+
 
     /**
      *
@@ -54,20 +75,6 @@ function App() {
     function modalPopup(){
         setVisible(!visible);
     }
-
-    async function getPosts() {
-        setLoader(true);
-        setTimeout(async ()=>{
-            const response = await apiService.apiCall();
-            setPosts(response);
-            setLoader(false);
-        },1500)
-    }
-
-    useEffect(() => {
-        getPosts();
-    },[])
-
     return (
     <div className="App">
         <h2>Create Post Block</h2>
@@ -77,6 +84,9 @@ function App() {
         </MyModal>
 
         <PostFilter  filter={filter} setFilter={setFilter}/>
+        {error &&
+        <h2>some error ${error}</h2>
+        }
         {!loader
         ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
         : <div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>
