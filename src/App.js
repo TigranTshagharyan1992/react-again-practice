@@ -7,7 +7,7 @@ import PostFilter from "./Components/PostFilter";
 import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/MyButton";
 import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
-import apiService from "./Serivicies";
+import service from "./Services";
 import {useFetching} from "./hooks/useFetching";
 
 /**
@@ -16,7 +16,10 @@ import {useFetching} from "./hooks/useFetching";
  * @constructor
  */
 function App() {
-    const postsUrl = 'https://jsonplaceholder.typicode.com/posts?_limit=10';
+    const postsUrl = 'https://jsonplaceholder.typicode.com/posts';
+    const [pagesCount, setPagesCount] = useState([])
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(10)
     const [posts, setPosts] = useState([]);
     const [filter, setFilter] = useState({sort: '', query: ''});
     const [visible,setVisible] =  useState(false);
@@ -27,22 +30,23 @@ function App() {
 
     // const [fetchPosts, isPostsLoading, postError] = useFetching(
     //     async()=>{
-    //         const response = await apiService.apiCall(postsUrl);
+    //         const response = await service.apiCall(postsUrl);
     //         setPosts(response);
     //     }
     // )
 
     async function getPosts() {
         setLoader(true)
-        const response = await apiService.apiCall(postsUrl,setError);
-        console.log(response.headers['x-total-count']);
-        // setPosts(response.data);
+        const response = await service.apiCall(postsUrl,setError,page,limit);
+        const count  = await service.getPagesCount(response.headers['x-total-count'],limit);
+        setPagesCount(count);
+        setPosts(response.data);
         setLoader(false);
     }
-
+    let pagesCountArray = service.getPagesArray(pagesCount);
     useEffect(() => {
         getPosts();
-    },[]);
+    },[page]);
 
 
     /**
@@ -86,6 +90,12 @@ function App() {
         ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
         : <div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>
         }
+        {pagesCountArray.map( (page, id) => {
+                const time = (new Date().getTime());
+                return <MyButton onClick={()=>setPage(page)} key={time+id}>{page}</MyButton>
+            }
+        )}
+
     </div>
   );
 }
