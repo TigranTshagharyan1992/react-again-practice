@@ -9,6 +9,7 @@ import MyButton from "./Components/UI/button/MyButton";
 import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
 import service from "./Services";
 import {useFetching} from "./hooks/useFetching";
+import Pagination from "./Components/pagination/Pagination";
 
 /**
  *
@@ -90,11 +91,7 @@ function App() {
         ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
         : <div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>
         }
-        {pagesCountArray.map( (page, id) => {
-                const time = (new Date().getTime());
-                return <MyButton onClick={()=>setPage(page)} key={time+id}>{page}</MyButton>
-            }
-        )}
+        <Pagination pagesCountArray={pagesCountArray} setPage={setPage} page={page} />
 
     </div>
   );
