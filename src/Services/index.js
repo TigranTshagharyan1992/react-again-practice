@@ -15,6 +15,22 @@ export default class Services {
            setError(e)
        }
     }
+    static async apiCallById(url,id,setError){
+        try {
+            const result =  await axios.get(url+id);
+            return result;
+        }catch (e) {
+            setError(e)
+        }
+    }
+    static async apiCallGetCommentsById(url,id,setError){
+        try {
+            const result =  await axios.get(url+id+'/comments');
+            return result;
+        }catch (e) {
+            setError(e)
+        }
+    }
 
     static async getPagesCount (totalPages,limit) {
 

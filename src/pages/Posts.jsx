@@ -1,15 +1,15 @@
 import React, {useState,useEffect} from 'react';
-import './styles/App.css'
-import PostList from "./Components/PostList";
-import Loader from "./Components/UI/Loader";
-import PostForm from "./Components/PostForm";
-import PostFilter from "./Components/PostFilter";
-import MyModal from "./Components/UI/MyModal/MyModal";
-import MyButton from "./Components/UI/button/MyButton";
-import {useCustomeHookPosts} from "./hooks/useCustomeHookPosts";
-import service from "./Services";
-import {useFetching} from "./hooks/useFetching";
-import Pagination from "./Components/pagination/Pagination";
+import './../styles/App.css'
+import PostList from "./../Components/PostList";
+import Loader from "./../Components/UI/Loader";
+import PostForm from "./../Components/PostForm";
+import PostFilter from "./../Components/PostFilter";
+import MyModal from "./../Components/UI/MyModal/MyModal";
+import MyButton from "./../Components/UI/button/MyButton";
+import {useCustomeHookPosts} from "./../hooks/useCustomeHookPosts";
+import service from "./../Services";
+import {useFetching} from "./../hooks/useFetching";
+import Pagination from "./../Components/pagination/Pagination";
 
 /**
  *

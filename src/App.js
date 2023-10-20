@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import {BrowserRouter} from "react-router-dom";
+import Router from "./Components/Router";
 
 /**
  *
@@ -9,9 +9,7 @@ import {BrowserRouter} from "react-router-dom";
 function App() {
 
     return (
-        <BrowserRouter>
-
-        </BrowserRouter>
+       <Router />
   );
 }
 
