@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './../styles/App.css'
 import PostList from "./../Components/PostList";
 import Loader from "./../Components/UI/Loader";
@@ -10,6 +10,8 @@ import {useCustomeHookPosts} from "./../hooks/useCustomeHookPosts";
 import service from "./../Services";
 import {useFetching} from "./../hooks/useFetching";
 import Pagination from "./../Components/pagination/Pagination";
+import {useObserver} from "../hooks/useObserver";
+import MySelect from "../Components/UI/select/MySelect";
 
 /**
  *
@@ -29,6 +31,10 @@ function Posts() {
 
     const sortedAndSearchPosts = useCustomeHookPosts(posts,filter.sort,filter.query);
 
+    const lastElement = useRef();
+
+
+
     // const [fetchPosts, isPostsLoading, postError] = useFetching(
     //     async()=>{
     //         const response = await service.apiCall(postsUrl);
@@ -41,13 +47,15 @@ function Posts() {
         const response = await service.apiCall(postsUrl,setError,page,limit);
         const count  = await service.getPagesCount(response.headers['x-total-count'],limit);
         setPagesCount(count);
-        setPosts(response.data);
+        setPosts([...posts,...response.data]);
         setLoader(false);
     }
     let pagesCountArray = service.getPagesArray(pagesCount);
     useEffect(() => {
         getPosts();
-    },[page]);
+    },[page,limit]);
+
+    useObserver(lastElement,()=>{setPage(page+1)},loader,page < pagesCount);
 
 
     /**
@@ -78,6 +86,17 @@ function Posts() {
     return (
         <div className="App">
             <h2>Create Post Block</h2>
+            <MySelect
+            value={limit}
+            onChange={event => setLimit(event.target.value)}
+            defaultValue="select limit"
+            options={[
+                {name:'10', value:10},
+                {name:'20', value:20},
+                {name:'40', value:40},
+                {name:'All', value:-1},
+            ]}
+            />
             <MyButton style={{marginTop: 10, marginBottom: 10}} onClick={modalPopup}>Show form</MyButton>
             <MyModal visible={visible} setVisible={setVisible}>
                 <PostForm addPost={addPost}/>
@@ -87,10 +106,10 @@ function Posts() {
             {error &&
             <h2>some error ${error}</h2>
             }
-            {!loader
-                ? <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
-                : <div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>
-            }
+            {loader&&<div style={{display: 'flex', justifyContent: 'center'}}><Loader /></div>}
+            <PostList posts={sortedAndSearchPosts} removePost={removePost} title="Posts title"/>
+            <div ref={lastElement} style={{height:20, backgroundColor:'red'}}>
+            </div>
             <Pagination pagesCountArray={pagesCountArray} setPage={setPage} page={page} />
 
         </div>
